@@ -263,43 +263,129 @@
   </div>
   
 
-  <form id="jobApplicationForm" method="POST" action="apply/" enctype="multipart/form-data" class="custom-form">
+  <form id="jobApplicationForm" method="POST" action="{% url 'job_application' %}" enctype="multipart/form-data" class="custom-form" novalidate>
     {% csrf_token %}
-    
-    <!-- Web3Forms Access Key -->
-    <input type="hidden" name="access_key" value="YOUR_ACCESS_KEY_HERE">
 
-    <div class="mb-3">
-        <input type="text" name="name" placeholder="Full Name" required>
+    <div class="mb-5">
+        {{ form.name }}
+        {% for error in form.name.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
     </div>
 
-    <div class="mb-3">
-        <input type="email" name="email" placeholder="Email" required>
+
+    <div class="mb-5">
+        {{ form.email }}
+        {% for error in form.email.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
     </div>
 
-    <div class="mb-3">
-        <input type="text" name="phone_number" placeholder="Phone Number" required>
+    <div class="mb-5">
+        {{ form.mobile }}
+        {% for error in form.mobile.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
     </div>
 
-    <div class="mb-3 dropdown-container">
-      <select name="job_position" required>
-          <option value="" disabled selected>Select Job Position</option>
-          {% for i in careerdata %}
-              <option value="{{ i.job_title }}">{{ i.job_title }}</option>
-          {% endfor %}
-      </select>
-      <i class="fa fa-chevron-down dropdown-icon"></i>
+    <div class="mb-5">
+        {{ form.job_position }}
+        {% for error in form.job_position.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
     </div>
 
-    <div class="mb-3">
-        <input type="file" name="resume" required>
+    <div class="mb-5">
+        {{ form.message }}
+        {% for error in form.message.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+    </div>
+
+    <div class="mb-5">
+        {{ form.resume }}
+        {% for error in form.resume.errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
     </div>
 
     <button type="submit" class="btn btn-primary w-100">Submit Application</button>
 </form>
 
-<!-- JavaScript to Send Data to Web3Forms -->
+
 <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("jobApplicationForm");
+    const submitBtn = form.querySelector("button[type='submit']");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault(); // ✅ STOP default form submit
+        submitBtn.disabled = true;
+
+        const formData = new FormData(form);
+        const formDataForWeb3 = new FormData(form);
+        formDataForWeb3.delete("resume"); // Web3Forms doesn't support files
+
+        // Clear previous errors
+        form.querySelectorAll(".text-danger").forEach(el => el.remove());
+
+        try {
+            // 1. Submit to Django backend
+            const djangoResponse = await fetch(form.action, {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: formData
+            });
+
+            const djangoData = await djangoResponse.json();
+
+            if (!djangoResponse.ok || !djangoData.success) {
+                if (djangoData.errors) {
+                    for (const [field, messages] of Object.entries(djangoData.errors)) {
+                        const input = form.querySelector(`[name="${field}"]`);
+                        if (input) {
+                            const errorDiv = document.createElement("div");
+                            errorDiv.classList.add("text-danger", "mt-1");
+                            errorDiv.innerText = messages.join(", ");
+                            input.insertAdjacentElement("afterend", errorDiv);
+                        }
+                    }
+                } else {
+                    alert("Submission failed. Try again.");
+                }
+                submitBtn.disabled = false;
+                return;
+            }
+
+            // 2. Submit to Web3Forms
+            fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formDataForWeb3
+            })
+            .then(res => res.json())
+            .then(data => console.log("Web3Forms Response:", data))
+            .catch(err => console.error("Web3Forms Error:", err));
+
+            // 3. Final success flow
+            alert("Application submitted successfully!");
+            window.location.href = "/Careers";
+
+        } catch (error) {
+            console.error("Submission error:", error);
+            alert("Something went wrong. Try again.");
+            submitBtn.disabled = false;
+        }
+    });
+});
+</script>
+
+
+
+
+<!-- JavaScript to Send Data to Web3Forms -->
+<!-- <script>
 document.getElementById("jobApplicationForm").addEventListener("submit", function(event) {
     event.preventDefault(); // Prevent default submission
 
@@ -322,11 +408,10 @@ document.getElementById("jobApplicationForm").addEventListener("submit", functio
     // Proceed with normal form submission to Django backend
     this.submit();
 });
-</script>
+</script> -->
 
 
 
-  
   
 <!-- Footer Start -->
 <div

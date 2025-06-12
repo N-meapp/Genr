@@ -1116,7 +1116,7 @@
                 connecting with you!
               </p>
 
-              <form action="{% url 'contact_form' %}" method="POST">
+              <!-- <form action="{% url 'contact_form' %}" method="POST">
                 {% csrf_token %}
                 <input type="hidden" name="access_key" value="7602f21f-477d-4668-8070-0b4e7ae9ae03">
             
@@ -1128,7 +1128,7 @@
                         <input type="email" name="email" class="form-control border-0" placeholder="Your Email" required>
                     </div>
                     <div class="col-12 col-sm-6">
-                        <input type="text" name="mobile" class="form-control border-0" placeholder="Your Mobile">
+                        <input type="text" name="mobile" class="form-control border-0" placeholder="Your Mobile" required>
                     </div>
                     <div class="col-12 col-sm-6">
                         <select name="enquiry" class="form-select border-0" required>
@@ -1147,11 +1147,46 @@
                         <button class="btn btn-primary rounded-pill py-3 px-5" type="submit">Submit</button>
                     </div>
                 </div>
-            </form>
-            
-            
-              
+            </form> -->
+            <div class="form-container">
+              <form method="post" action="{% url 'contact_form' %}">
+                {% csrf_token %}
 
+                <div class="form-grid">
+                  <div>
+                    <label for="{{ form.name.id_for_label }}">Name</label>
+                    {{ form.name }}
+                  </div>
+                  <!-- <div>
+                    <label for="{{ form.email.id_for_label }}">Email</label>
+                    {{ form.email }}
+                  </div> -->
+                  <div>
+                    <label for="{{ form.email.id_for_label }}">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                      <div class="error" style="color: red;">{{ form.email.errors }}</div>
+                    {% endif %}
+                  </div>
+
+                  <div>
+                    <label for="{{ form.mobile.id_for_label }}">Mobile</label>
+                    {{ form.mobile }}
+                  </div>
+                  <div>
+                    <label for="{{ form.enquiry.id_for_label }}">Enquiry</label>
+                    {{ form.enquiry }}
+                  </div>
+
+                  <div class="form-full">
+                    <label for="{{ form.message.id_for_label }}">Message</label>
+                    {{ form.message }}
+                  </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Submit</button>
+              </form>
+            </div>
             </div>
           </div>
         </div>
@@ -1296,5 +1331,52 @@
           parent.style.display = "none"; 
       }
   }</script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.querySelector("form");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const formData = new FormData(form);
+
+    fetch("{% url 'contact_form' %}", {
+      method: "POST",
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value
+      },
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        alert("Form submitted successfully!");
+        form.reset();
+      } else {
+        const errorDivs = document.querySelectorAll(".error");
+        errorDivs.forEach(div => div.remove());
+
+        for (let field in data.errors) {
+          const fieldEl = document.querySelector(`[name="${field}"]`);
+          if (fieldEl) {
+            const error = document.createElement("div");
+            error.classList.add("error");
+            error.style.color = "red";
+            error.innerText = data.errors[field][0];
+            fieldEl.parentNode.appendChild(error);
+          }
+        }
+      }
+    })
+    .catch(error => {
+      console.error("Submission failed:", error);
+    });
+  });
+});
+</script>
+
+
   </body>
 </html>

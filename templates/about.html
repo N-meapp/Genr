@@ -330,7 +330,7 @@
                     <h6 class="text-primary">Raise An Issue</h6>
                     <h1 class="mb-4">Let Us Know Your Concern!</h1>
                     <p class="mb-4">Kindly provide as much detail as possible so we can resolve your complaint efficiently. Thank you for giving us the opportunity to make things right.</p>
-                    <form  method="POST">
+                    <!-- <form  method="POST">
                         {% csrf_token %}
                         {% comment %} <input type="hidden" name="access_key" value="7602f21f-477d-4668-8070-0b4e7ae9ae03"> {% endcomment %}
                     
@@ -356,7 +356,7 @@
                             <input type="text" name="customer_id" class="form-control border-0" placeholder="Customer ID" required>
 
                            </div>
-                           <!-- Star Rating (using Font Awesome icons) -->
+                           
                             <div class="col-12 col-sm-6">
                                 <label for="rating">Rating:</label>
                                 <div class="stars">
@@ -368,14 +368,57 @@
                                 </div>
                                 <br><br>
                         
-                                <!-- Hidden input to store the selected rating -->
+                                
                                 <input type="hidden" name="rating" id="rating-input" value="" required>
                                 <br><br>
                             </div>
                         <button class="btn btn-primary rounded-pill py-3 px-5" type="submit">Submit</button>
 
+                    </form> -->
+                    <form id="reviewForm" method="POST">
+                        {% csrf_token %}
+                        <div class="row g-3">
+                            <div class="col-12 col-sm-6">
+                                <input type="text" name="full_name" id="full_name" class="form-control border-0" placeholder="Your Name" required>
+                                <div class="text-danger error" id="error-full_name"></div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <input type="email" name="email" id="email" class="form-control border-0" placeholder="Your Email" required>
+                                <div class="text-danger error" id="error-email"></div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <input type="text" name="work" id="work" class="form-control border-0" placeholder="Work" required>
+                                <div class="text-danger error" id="error-work"></div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <input type="text" name="company_name" id="company_name" class="form-control border-0" placeholder="Your Company Name">
+                                <div class="text-danger error" id="error-company_name"></div>
+                            </div>
+                            <div class="col-12">
+                                <textarea name="message" id="message" class="form-control border-0" placeholder="Message" required></textarea>
+                                <div class="text-danger error" id="error-message"></div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <input type="text" name="customer_id" id="customer_id" class="form-control border-0" placeholder="Customer ID" required>
+                                <div class="text-danger error" id="error-customer_id"></div>
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <label for="rating">Rating:</label>
+                                <div class="stars">
+                                    <i class="fas fa-star" data-value="1"></i>
+                                    <i class="fas fa-star" data-value="2"></i>
+                                    <i class="fas fa-star" data-value="3"></i>
+                                    <i class="fas fa-star" data-value="4"></i>
+                                    <i class="fas fa-star" data-value="5"></i>
+                                </div>
+                                <input type="hidden" name="rating" id="rating-input" value="" required>
+                                <div class="text-danger error" id="error-rating"></div>
+                            </div>
+                            <button class="btn btn-primary rounded-pill py-3 px-5" type="submit">Submit</button>
+                            <div id="success-message" class="text-success mt-2"></div>
+                        </div>
                     </form>
-                    
+
                 </div>
             </div>
             <div class="col-lg-6 pe-lg-0" style="min-height: 400px;">
@@ -390,6 +433,58 @@
     </div>
 </div>
 <!-- Contact End -->
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('.stars i');
+    const ratingInput = document.getElementById('rating-input');
+
+    stars.forEach(star => {
+        star.addEventListener('click', () => {
+            const value = star.getAttribute('data-value');
+            ratingInput.value = value;
+            stars.forEach(s => s.classList.remove('selected'));
+            for (let i = 0; i < value; i++) {
+                stars[i].classList.add('selected');
+            }
+        });
+    });
+
+    document.getElementById('reviewForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const formData = new FormData(form);
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // Clear previous errors
+        document.querySelectorAll('.error').forEach(el => el.innerText = '');
+        document.getElementById('success-message').innerText = '';
+
+        fetch("{% url 'submit_review_ajax' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken,
+            },
+            body: formData,
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                form.reset();
+                document.getElementById('success-message').innerText = data.message;
+            } else {
+                for (let field in data.errors) {
+                    document.getElementById(`error-${field}`).innerText = data.errors[field][0];
+                }
+            }
+        })
+        .catch(err => {
+            alert("Something went wrong!");
+        });
+    });
+});
+</script>
 
         
 <!-- Footer Start -->
