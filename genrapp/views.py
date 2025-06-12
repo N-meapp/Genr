@@ -29,6 +29,7 @@ from .forms import *
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from .forms import *
+import cloudinary.uploader
 
 def home(request):
     news = News.objects.all()
@@ -291,13 +292,27 @@ def logout_view(request):
 
 # Admin Panel
 
+# def galleryadd(request):
+#     if request.method == "POST":
+#         image= request.FILES.get('galleryimage')
+#         category = request.POST.get('category')
+#         addinggalery = Gallery(gallery_image=image,category=category)
+#         addinggalery.save()
+#     return redirect('dashboard') 
+#  
 def galleryadd(request):
     if request.method == "POST":
-        image= request.FILES.get('galleryimage')
+        image = request.FILES.get('galleryimage')
         category = request.POST.get('category')
-        addinggalery = Gallery(gallery_image=image,category=category)
-        addinggalery.save()
-    return redirect('dashboard')  # Replace 'admin_page' with the actual name of your page's URL pattern
+        
+        # Upload to Cloudinary and get the URL
+        upload_result = cloudinary.uploader.upload(image)
+        image_url = upload_result.get('secure_url')
+
+        # Save URL to the model
+        Gallery.objects.create(gallery_image=image_url, category=category)
+        
+    return redirect('dashboard')
 
 
 
@@ -307,9 +322,10 @@ def offeradd(request):
         banner_title = request.POST.get('bannertitle')
         banner_content = request.POST.get('bannercontent')
         image = request.FILES.get('image')  # Use request.FILES for file uploads
-
+        upload_result = cloudinary.uploader.upload(image)
+        image_url = upload_result.get('secure_url')
         # Save the data to the model
-        addingoffer = Offer(banner_title=banner_title, banner_content=banner_content, image=image)
+        addingoffer = Offer(banner_title=banner_title, banner_content=banner_content, image=image_url)
         addingoffer.save()
     return redirect('dashboard')  # Replace 'admin_page' with the actual name of your page's URL pattern
 
@@ -648,7 +664,9 @@ def addnews(request):
         desc = request.POST.get('newsdesc')
         name = request.POST.get('newsname')
         date= request.POST.get('newsdate')
-        addingnews =News(image=image,description=desc,name=name,date=date)
+        upload_result = cloudinary.uploader.upload(image)
+        image_url = upload_result.get('secure_url')
+        addingnews =News(image=image_url,description=desc,name=name,date=date)
         addingnews.save()
     return HttpResponseRedirect(reverse('dashboard') + '#news-section')
 

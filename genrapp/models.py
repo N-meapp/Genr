@@ -8,21 +8,21 @@ class Our_Products(models.Model):
     name = models.CharField(max_length=25, blank=False)
     company_name = models.CharField(max_length=50,blank=False)
     description = models.TextField()
-    image = models.ImageField(upload_to='products')
+    image = models.URLField(null=True, blank=True)
 
     def __str__(self):
         return self.name
     
 
 class Gallery(models.Model):
-    gallery_image = models.ImageField(upload_to='gallery', null=True, blank=True)
+    gallery_image = models.URLField(null=True, blank=True)
     data = models.DateTimeField(auto_now=True)
     category = models.CharField(max_length=20)
 
 class Offer(models.Model):
     banner_title = models.CharField(max_length=25, default="Our Offers")
     banner_content = models.TextField(blank=True)
-    image = models.ImageField(upload_to='offer')
+    image = models.URLField(null=True, blank=True)
 
 class Our_Works(models.Model):
     title = models.CharField(max_length=25)
@@ -94,7 +94,7 @@ class News(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(null=False, blank=False)
     date = models.CharField(max_length=50)
-    image = models.ImageField(upload_to='news')
+    image = models.URLField(null=True, blank=True)
 
 
     def __str__(self):
@@ -167,7 +167,6 @@ class Invoice(models.Model):
     total_power = models.CharField(max_length=30,blank=True)
     packages = models.TextField()
     details = models.TextField()
-
 
 class Package(models.Model):
     name = models.CharField(max_length=100)
