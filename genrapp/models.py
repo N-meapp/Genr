@@ -1,11 +1,12 @@
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.auth.hashers import make_password, check_password
 
 # Create your models here.
 
 class Our_Products(models.Model):
-    name = models.CharField(max_length=225, blank=False)
-    company_name = models.CharField(max_length=225,blank=False)
+    name = models.CharField(max_length=25, blank=False)
+    company_name = models.CharField(max_length=50,blank=False)
     description = models.TextField()
     image = models.ImageField(upload_to='products')
 
@@ -19,13 +20,13 @@ class Gallery(models.Model):
     category = models.CharField(max_length=20)
 
 class Offer(models.Model):
-    banner_title = models.CharField(max_length=125, default="Our Offers")
+    banner_title = models.CharField(max_length=25, default="Our Offers")
     banner_content = models.TextField(blank=True)
     image = models.ImageField(upload_to='offer')
 
 class Our_Works(models.Model):
-    title = models.CharField(max_length=225)
-    work_category = models.CharField(max_length=125)
+    title = models.CharField(max_length=25)
+    work_category = models.CharField(max_length=25)
     thumbnail_img = models.ImageField(upload_to='works')
     description = models.TextField()
 
@@ -39,9 +40,9 @@ class Addiotional_work_images(models.Model):
 
 
 class Enquiry(models.Model):
-        name = models.CharField(max_length=225, blank=False)
-        email = models.EmailField(max_length=225, blank=False)
-        phone_number = models.CharField(max_length=225, blank=False)
+        name = models.CharField(max_length=25, blank=False)
+        email = models.EmailField()
+        phone_number = models.CharField(max_length=10, blank=False)
         services = models.CharField(max_length=225,blank=False)
         message = models.TextField()
 
@@ -55,20 +56,20 @@ class Enquiry(models.Model):
         
 
 class Career(models.Model):
-        job_title = models.CharField(max_length=225, blank=False)
-        job_description = models.CharField(max_length=225,blank=False)
-        work_time = models.TextField()
-        email = models.EmailField(max_length=225, blank=False)
-        phone_number = models.CharField(max_length=225, blank=False)
+    job_title = models.CharField(max_length=25, blank=False)
+    job_description = models.CharField(max_length=225,blank=False)
+    work_time = models.TextField()
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=10, blank=False)
 
-        def __str__(self):
-            return self.job_title
+    def __str__(self):
+        return self.job_title
         
 
 class JobApplication(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=25)
     email = models.EmailField()
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=10)
     job_position = models.CharField(max_length=255)
     cv = models.FileField(upload_to='resumes/')
 
@@ -76,25 +77,16 @@ class JobApplication(models.Model):
         return self.name
 
 
-
-
-
 class ContactForm(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=25)
     email = models.EmailField()
-    mobile = models.CharField(max_length=15, blank=True, null=True)
+    mobile = models.CharField(max_length=10)
     enquiry_type = models.CharField(max_length=100)
     message = models.TextField()
     submitted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
-
-
-
-
-
-
 
 
 
@@ -109,8 +101,20 @@ class News(models.Model):
         return self.name
     
 class Login(models.Model):
-    username = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
+    username = models.CharField(max_length=50, unique=True)
+    password = models.CharField(max_length=128)
+
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+
+    def check_password(self, raw_password):
+        return check_password(raw_password, self.password)
+
+    def save(self, *args, **kwargs):
+        # Only hash if not already hashed
+        if not self.password.startswith('pbkdf2_'):
+            self.password = make_password(self.password)
+        super().save(*args, **kwargs)
 
 
 class Count(models.Model):
@@ -129,8 +133,8 @@ class WorkPlace(models.Model):
 
 
 class CustomerReview(models.Model):
-    full_name = models.CharField(max_length=100)
-    email = models.CharField(max_length=50)
+    full_name = models.CharField(max_length=25)
+    email = models.EmailField()
     customer_id = models.CharField(max_length=15, blank=True, null=True)
     work = models.CharField(max_length=100, blank=True, null=True)
     company_name = models.CharField(max_length=100, blank=True, null=True)

@@ -891,13 +891,13 @@ body {
 
 @media (min-width: 1200px) {
   .quote-text {
-    padding-right: calc(((100% - 1140px) / 2) + .75rem);
+    padding-right: calc(((100% - 1140px) / 2) + -16.25rem);
   }
 }
 
 @media (min-width: 1400px) {
   .quote-text {
-    padding-right: calc(((100% - 1320px) / 2) + .75rem);
+    padding-right: calc(((100% - 1320px) / 2) + -16.25rem);
   }
 }
 
@@ -947,13 +947,13 @@ body {
 
 @media (min-width: 1200px) {
   .contact-text {
-    padding-left: calc(((100% - 1140px) / 2) + .75rem);
+    padding-left: calc(((100% - 1140px) / 2) + -11.25rem);
   }
 }
 
 @media (min-width: 1400px) {
   .contact-text {
-    padding-left: calc(((100% - 1320px) / 2) + .75rem);
+    padding-left: calc(((100% - 1320px) / 2) + -11.25rem);
   }
 }
 
@@ -1809,3 +1809,101 @@ p {
 }
 
 
+
+
+/* forms.py styling */
+
+    .form-container {
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 25px;
+    /* border: 1px solid #ddd; */
+    border-radius: 12px;
+    /* background-color: #f9f9f9; */
+    /* box-shadow: 0 2px 6px rgba(0,0,0,0.05); */
+    font-family: Arial, sans-serif;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .form-full {
+    grid-column: 1 / -1;
+  }
+
+  label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border 0.3s ease;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+
+  button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+
+  /* Normal input appearance */
+  input, textarea, select {
+    border: 2px solid rgb(0 0 0 / 53%);
+    padding: 12px;
+    border-radius: 18px;
+    width: 100%;
+    font-size: 14px;
+    transition: border-color 0.3s, background-color 0.3s;
+  }
+
+  /* Highlight field in red if validation fails */
+  input:invalid, textarea:invalid, select:invalid {
+    border: 2px solid rgb(0 0 0 / 53%);
+    background-color: #ffffff;
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  .form-select{
+    border: 2px solid rgb(0 0 0 / 53%);
+    padding: 12px;
+    border-radius: 18px;
+  }
+  .submit-btn{
+    padding: 15px 25px;
+    border-radius: 18px;
+    background-color: #32c36c;
+
+  }
+  .form-label{
+    color: #000000a2;
+    font-weight: 600;
+  }
+
+.error-text{
+  color: red;
+}

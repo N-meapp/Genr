@@ -27,7 +27,7 @@
         <h1 >Login</h1>
        
 
-        <form action="" method="POST">
+        <!-- <form action="" method="POST">
             {% csrf_token %}
             <div class="form-box">
                 <label for="username">Username</label>
@@ -37,8 +37,23 @@
                 <input type="submit" value="login" class="form-control login-button bg-success text-light">
             </div>
            
-        </form>
+        </form> -->
 
+        <form action="" method="POST">
+            {% csrf_token %}
+            {% if error %}
+                <div class="text-danger">{{ error }}</div>
+            {% endif %}
+            <div class="form-box">
+                <label for="username">Username</label>
+                <input type="text" name="username" class="form-control" required pattern="[A-Za-z0-9@_.]+" title="Only letters, numbers, @, _, and . allowed">
+                
+                <label for="password" class="pt-3">Password</label>
+                <input type="password" name="password" class="form-control" required minlength="6" title="Password must be at least 6 characters">
+
+                <input type="submit" value="Login" class="form-control login-button bg-success text-light">
+            </div>
+        </form>
     </div>
 </div>
 

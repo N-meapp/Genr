@@ -117,14 +117,14 @@
                     <h6 class="text-primary">Raise An Issue</h6>
                     <h1 class="mb-4">Let Us Know Your Concern!</h1>
                     <p class="mb-4">Kindly provide as much detail as possible so we can resolve your complaint efficiently. Thank you for giving us the opportunity to make things right.</p>
-                    <form id="customerForm" action="" method="post">
+                    <!-- <form id="customerForm" action="" method="post">
                       {% csrf_token %}
                   
-                      <!-- Web3Forms Access Key -->
+                      
                       <input type="hidden" name="access_key" value="7602f21f-477d-4668-8070-0b4e7ae9ae03">
                   
                       <div class="row g-3">
-                          <!-- Customer ID Field -->
+                          
                           <div class="col-12">
                               <input type="text" class="form-control border-0" placeholder="Customer ID *" name="customer_id" style="height: 55px;" required>
                           </div>
@@ -159,8 +159,140 @@
                               <button class="btn btn-primary rounded-pill py-3 px-5" type="submit">Submit</button>
                           </div>
                       </div>
-                  </form>
+                    </form> -->
                   
+
+                    <form id="serviceForm" method="post" novalidate>
+                      {% csrf_token %}
+
+                      <div class="row">
+                        <!-- Name -->
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Name<span class="required-star">*</span></label>
+                          {{ form.name }}
+                          <div id="name-error" class="error-text"></div>
+                          {% for error in form.name.errors %}
+                            <div class="error-text">{{ error }}*</div>
+                          {% endfor %}
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Email<span class="required-star">*</span></label>
+                          {{ form.email }}
+                          <div id="email-error" class="error-text"></div>
+                          {% for error in form.email.errors %}
+                            <div class="error-text">{{ error }}*</div>
+                          {% endfor %}
+                        </div>
+                      </div>
+
+                      <div class="row">
+                        <!-- Phone Number -->
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Phone Number<span class="required-star">*</span></label>
+                          {{ form.phone_number }}
+                          <div id="phone-error" class="error-text"></div>
+                          {% for error in form.phone_number.errors %}
+                            <div class="error-text">{{ error }}*</div>
+                          {% endfor %}
+                        </div>
+
+                        <!-- Services -->
+                        <div class="col-md-6 mb-3">
+                          <label class="form-label">Service Category<span class="required-star">*</span></label>
+                          {{ form.services }}
+                          {% for error in form.services.errors %}
+                            <div class="error-text">{{ error }}*</div>
+                          {% endfor %}
+                        </div>
+                      </div>
+
+                      <!-- Special Note (Full Width) -->
+                      <div class="mb-3">
+                        <label class="form-label">Special Note<span class="required-star">*</span></label>
+                        {{ form.special_note }}
+                        <div id="note-error" class="error-text"></div>
+                        {% for error in form.special_note.errors %}
+                          <div class="error-text">{{ error }}*</div>
+                        {% endfor %}
+                      </div>
+
+                      <div class="text-end">
+                        <button type="submit" class="btn btn-primary px-4 submit-btn">Submit</button>
+                      </div>
+                    </form>
+
+
+                    
+                    <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+                      const form = document.getElementById("serviceForm");
+
+                      const name = document.getElementById("id_name");
+                      const email = document.getElementById("id_email");
+                      const phone = document.getElementById("id_phone_number");
+                      const note = document.getElementById("id_special_note");
+
+                      name.addEventListener("input", () => {
+                        const regex = /^[A-Za-z ]+$/;
+                        if (!regex.test(name.value)) {
+                          name.classList.add("is-invalid");
+                          document.getElementById("name-error").innerText = "Only letters and spaces are allowed.";
+                        } else {
+                          name.classList.remove("is-invalid");
+                          document.getElementById("name-error").innerText = "";
+                        }
+                      });
+
+                      email.addEventListener("input", () => {
+                        const regex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+                        if (!regex.test(email.value)) {
+                          email.classList.add("is-invalid");
+                          document.getElementById("email-error").innerText = "Enter a valid email address.";
+                        } else {
+                          email.classList.remove("is-invalid");
+                          document.getElementById("email-error").innerText = "";
+                        }
+                      });
+
+                      phone.addEventListener("input", () => {
+                        const regex = /^[0-9]{10}$/;
+                        if (!regex.test(phone.value)) {
+                          phone.classList.add("is-invalid");
+                          document.getElementById("phone-error").innerText = "Enter a 10-digit phone number.";
+                        } else {
+                          phone.classList.remove("is-invalid");
+                          document.getElementById("phone-error").innerText = "";
+                        }
+                      });
+
+                      note.addEventListener("input", () => {
+                        const regex = /^[A-Za-z0-9 \n\r]+$/;
+                        if (!regex.test(note.value)) {
+                          note.classList.add("is-invalid");
+                          document.getElementById("note-error").innerText = "Only letters and numbers allowed.";
+                        } else {
+                          note.classList.remove("is-invalid");
+                          document.getElementById("note-error").innerText = "";
+                        }
+                      });
+
+                      form.addEventListener("submit", (e) => {
+                        if (
+                          name.classList.contains("is-invalid") ||
+                          email.classList.contains("is-invalid") ||
+                          phone.classList.contains("is-invalid") ||
+                          note.classList.contains("is-invalid")
+                        ) {
+                          e.preventDefault(); // Prevent submission if any field is invalid
+                          alert("Please correct the errors before submitting.");
+                        }
+                      });
+                    });
+                    </script>
+
+
                   <!-- JavaScript to Send Data to Web3Forms -->
                   <script>
                   document.getElementById("customerForm").addEventListener("submit", function(event) {
@@ -183,9 +315,6 @@
                       this.submit();
                   });
                   </script>
-                  
-                  
-                    
                 </div>
             </div>
             <div class="col-lg-6 ps-lg-0 wow fadeIn" data-wow-delay="0.1s" style="min-height: 400px;">

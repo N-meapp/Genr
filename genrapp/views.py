@@ -24,6 +24,7 @@ from .models import *
 from django.shortcuts import render, get_object_or_404, redirect
 
 from django.views.decorators.cache import never_cache
+from .forms import *
 
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -36,51 +37,75 @@ def home(request):
     'offer_data': Offer.objects.all(),
     'news':news,
     'counts': counts,
-    'rating':CustomerReview.objects.all()
+    'rating':CustomerReview.objects.all(),
+    'form' : ContactFormData()
     }
     return render(request,'index.html',context)
 
 
+
+# def about(request):
+#     # Retrieve all news and workplace records from the database
+#     news = News.objects.all()
+#     work_place = WorkPlace.objects.all()
+    
+#     # Variable to store the success message
+#     msg = ""
+    
+#     # Check if the request method is POST (i.e., form submission)
+#     if request.method == 'POST':
+#         # Create a new instance of CustomerReview
+#         data1 = CustomerReview()
+        
+#         # Retrieve form data from the POST request
+#         full_name = request.POST.get('full_name')
+#         email = request.POST.get('email')
+#         company_name = request.POST.get('company_name', '')  # Default to empty string if not provided
+#         message = request.POST.get('message')
+#         customer_id = request.POST.get('customer_id')
+#         review = request.POST.get('rating')
+
+        
+#         # Assign values to the CustomerReview instance
+#         data1.full_name = full_name
+#         data1.email = email
+#         data1.company_name = company_name
+#         data1.message = message
+#         data1.customer_id = customer_id
+#         data1.rating = review
+
+        
+        
+#         # Save the review to the database
+#         data1.save()
+        
+#         # Set the success message to be displayed in the template
+#         msg = "Thanks for your review!"
+
+#     # Render the about page with the news, work_place, and msg context
+#     return render(request, 'about.html', {'news': news, 'work_place': work_place, 'msg': msg,'offer_data': Offer.objects.all()})
+
+def submit_review_ajax(request):
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True, 'message': "Thanks for your review!"})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+    return JsonResponse({'error': 'Invalid method'}, status=405)
+
+
 def about(request):
-    # Retrieve all news and workplace records from the database
     news = News.objects.all()
     work_place = WorkPlace.objects.all()
-    
-    # Variable to store the success message
-    msg = ""
-    
-    # Check if the request method is POST (i.e., form submission)
-    if request.method == 'POST':
-        # Create a new instance of CustomerReview
-        data1 = CustomerReview()
-        
-        # Retrieve form data from the POST request
-        full_name = request.POST.get('full_name')
-        email = request.POST.get('email')
-        company_name = request.POST.get('company_name', '')  # Default to empty string if not provided
-        message = request.POST.get('message')
-        customer_id = request.POST.get('customer_id')
-        review = request.POST.get('rating')
+    return render(request, 'about.html', {
+        'news': news,
+        'work_place': work_place,
+        'offer_data': Offer.objects.all()
+    })
 
-        
-        # Assign values to the CustomerReview instance
-        data1.full_name = full_name
-        data1.email = email
-        data1.company_name = company_name
-        data1.message = message
-        data1.customer_id = customer_id
-        data1.rating = review
 
-        
-        
-        # Save the review to the database
-        data1.save()
-        
-        # Set the success message to be displayed in the template
-        msg = "Thanks for your review!"
-
-    # Render the about page with the news, work_place, and msg context
-    return render(request, 'about.html', {'news': news, 'work_place': work_place, 'msg': msg,'offer_data': Offer.objects.all()})
 
 
 def Review_delete(request, id):
@@ -97,7 +122,7 @@ def cold_storage(request):
     return render(request,'cold_storage.html',{'offer_data': Offer.objects.all()})
 
 def contact(request):
-    return render(request,'contact.html',{'offer_data': Offer.objects.all()})
+    return render(request,'contact.html',{'offer_data': Offer.objects.all(),'form' : ContactFormData()})
 
 def gallery(request):
     return render(request,'gallery.html',{'offer_data': Offer.objects.all()})
@@ -126,54 +151,90 @@ def workdetails(request):
 
 def Careers(request):
    careerdata = Career.objects.all()
+   form = CareerForm()
    context = {
          'careerdata': careerdata,
-         'offer_data': Offer.objects.all().distinct()
+         'offer_data': Offer.objects.all().distinct(),
+         'form': form
     }
    return render(request,'careers.html',context)
 
 
+# def job_application_view(request):
+#     if request.method == "POST":
+#         name = request.POST.get("name")
+#         email = request.POST.get("email")
+#         phone_number = request.POST.get("phone_number")
+#         job_position = request.POST.get("job_position")
+#         resume = request.FILES.get("resume")  
+
+#         if all([name, email, phone_number, job_position, resume]):  
+#             job = JobApplication.objects.create(
+#                 name=name,
+#                 email=email,
+#                 phone_number=phone_number,
+#                 job_position=job_position,
+#                 cv=resume
+#             )
+
+#             # Email content
+#             subject = "New Job Application Received"
+#             message = f"""
+#             Name: {name}
+#             Email: {email}
+#             Phone: {phone_number}
+#             Position: {job_position}
+#             """
+
+#             mail = EmailMessage(
+#                 subject,
+#                 message,
+#                 from_email="info@genr.in",
+#                 to=["info@genr.in"],
+#                 reply_to=[email]
+#             )
+
+#             # Attach the uploaded resume
+#             mail.attach(resume.name, resume.read(), resume.content_type)
+#             mail.send()
+
+#         return redirect("careers")  
+
+#     return render(request, "careers.html")
+
+
 def job_application_view(request):
     if request.method == "POST":
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        phone_number = request.POST.get("phone_number")
-        job_position = request.POST.get("job_position")
-        resume = request.FILES.get("resume")  
+        form = CareerForm(request.POST, request.FILES)
 
-        if all([name, email, phone_number, job_position, resume]):  
-            job = JobApplication.objects.create(
-                name=name,
-                email=email,
-                phone_number=phone_number,
-                job_position=job_position,
-                cv=resume
+        if form.is_valid():
+            data = form.cleaned_data
+
+            JobApplication.objects.create(
+                name=data['name'],
+                email=data['email'],
+                phone_number=data['mobile'],
+                job_position=data['job_position'],
+                cv=data['resume']
             )
 
-            # Email content
-            subject = "New Job Application Received"
-            message = f"""
-            Name: {name}
-            Email: {email}
-            Phone: {phone_number}
-            Position: {job_position}
-            """
+            # Email sending code...
 
-            mail = EmailMessage(
-                subject,
-                message,
-                from_email="info@genr.in",
-                to=["info@genr.in"],
-                reply_to=[email]
-            )
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({"success": True})
 
-            # Attach the uploaded resume
-            mail.attach(resume.name, resume.read(), resume.content_type)
-            mail.send()
+            return redirect("careers")  # fallback if JS fails
 
-        return redirect("careers")  
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({"success": False, "errors": form.errors}, status=400)
 
-    return render(request, "careers.html")
+        return render(request, "careers.html", {"form": form})
+
+    return render(request, "careers.html", {"form": CareerForm()})
+
+
+
+
 
 def admin_dashboard(request):
     applications = JobApplication.objects.all()  # Get all job applications
@@ -183,61 +244,48 @@ def admin_dashboard(request):
 
 
 def login(request):
-    
-
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
+        username = request.POST.get('username').strip()
+        password = request.POST.get('password').strip()
 
-        # Authenticate user with the username and password
-        user = Login.objects.filter(username=username, password=password)
-        
-        
-        if user:
+        try:
+            user = Login.objects.get(username=username)
+        except Login.DoesNotExist:
+            return render(request, 'login.html', {'error': 'Invalid credentials'})
+
+        if user.check_password(password):
             request.session["name"] = username
-            # login(request,user)
 
-            response = redirect('dashboard')  # Render the login page
+            response = redirect('dashboard')
             response['Cache-Control'] = 'no-store, no-cache, must-revalidate, proxy-revalidate'
             response['Pragma'] = 'no-cache'
             response['Expires'] = '0'
-            
-    
             return response
 
-            return redirect('dashboard')  # Redirect to the dashboard page
         else:
             return render(request, 'login.html', {'error': 'Invalid credentials'})
+    
     else:
-       
         if "name" in request.session:
-            print("povulladaaa mandddaaaaaaaa",request.session['name'])
-            # return HttpResponse('povullladaaaa mandddaaaaaaaa')  
             return redirect('dashboard')
-
         else:
-            print("lloginnnnn")
-            response = render(request, 'login.html')  # Render the login page
+            response = render(request, 'login.html')
             response['Cache-Control'] = 'no-store, no-cache, must-revalidate, proxy-revalidate'
             response['Pragma'] = 'no-cache'
             response['Expires'] = '0'
-    
             return response
-    
 
-    
-    
+
+
 
 from django.contrib.auth import logout
-
 
 def logout_view(request):
     if "name" in request.session:
         request.session.pop("name")
 
-        return redirect('login')  # Redirect the user to the login page
+        return redirect('login')  
 
-    
 
 
 
@@ -353,41 +401,10 @@ def work_details(request,work_id):
     return render(request, 'work_details.html',context)
 
 
-def request_service(request):
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        service = request.POST.get('services')
-        message = request.POST.get('message')
-
-        enquiry = Enquiry(
-            name = name,
-            email = email,
-            phone_number = phone,
-            services = service,
-            message = message,
-        )
-        enquiry.save()
-        messages.success(request, 'Your message has been sent successfully')
-        return redirect('request_service')
-    
-    return render(request, 'Requestserviceform.html')
-
-def Enquiry_delete(request,id):
-    enquiry = Enquiry.objects.get(id = id)
-    print("the data:",enquiry)
-    if enquiry:
-        enquiry.delete()
-    return redirect('dashboard')
-
-
-
-
 def dashboard(request):
     if "name" in request.session:
 
-        print(request.session["name"],"dashboard anada")
+        print(request.session["name"],"dashboard")
         powerenergy = 'Power & Energy'
         powerenergyworks = Our_Works.objects.filter(work_category=powerenergy).distinct()
 
@@ -462,7 +479,7 @@ def dashboard(request):
         return response
     
     else:
-        print("dashboard allada")
+        print("no dashboard")
         return redirect('login') 
     
 
@@ -701,41 +718,149 @@ def update_count(request, id):
 #     return render(request, 'your_template.html', {'careerdata': careerdata})
 
 
+# def contact_form(request):
+#     if request.method == "POST":
+#         name = request.POST.get('name')
+#         email = request.POST.get('email')
+#         mobile = request.POST.get('mobile')
+#         enquiry_type = request.POST.get('enquiry')
+#         message = request.POST.get('message')
+
+     
+#         ContactForm.objects.create(
+#             name=name,
+#             email=email,
+#             mobile=mobile,
+#             enquiry_type=enquiry_type,
+#             message=message
+#         )
+
+      
+#         data = {
+#             "access_key": "7602f21f-477d-4668-8070-0b4e7ae9ae03",
+#             "name": name,
+#             "email": email,
+#             "mobile": mobile,
+#             "enquiry": enquiry_type,
+#             "message": message
+#         }
+#         response = requests.post("https://api.web3forms.com/submit", data=data)
+
+        
+#         if response.status_code == 200:
+#             return redirect('home') 
+#         else:
+#             return redirect('home')  
+#     return render(request, 'index.html')
+
+
+# def contact_form(request):
+#     if request.method == "POST":
+#         form = ContactFormData(request.POST)
+#         if form.is_valid():
+#             data = form.cleaned_data
+
+#             # Save securely to the database
+#             ContactForm.objects.create(
+#                 name=data['name'],
+#                 email=data['email'],
+#                 mobile=data['mobile'],
+#                 enquiry_type=data['enquiry'],
+#                 message=data['message']
+#             )
+
+#             # Forward to Web3Forms
+#             web3_data = {
+#                 "access_key": "7602f21f-477d-4668-8070-0b4e7ae9ae03",
+#                 "name": data['name'],
+#                 "email": data['email'],
+#                 "mobile": data['mobile'],
+#                 "enquiry": data['enquiry'],
+#                 "message": data['message']
+#             }
+
+#             try:
+#                 response = requests.post("https://api.web3forms.com/submit", data=web3_data)
+#                 if response.status_code == 200:
+#                     return redirect('/')
+#             except requests.exceptions.RequestException:
+#                 pass  # Optional: log the error
+
+#             # Fallback redirect
+#             return redirect('/')
+#         else:
+#             # Optional: Return form with errors
+#             return render(request, 'index.html', {'form': form})
+#     else:
+#         form = ContactFormData()
+#     return render(request, 'index.html')
+
+
+from django.http import JsonResponse
+
 def contact_form(request):
-    if request.method == "POST":
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        mobile = request.POST.get('mobile')
-        enquiry_type = request.POST.get('enquiry')
-        message = request.POST.get('message')
+    if request.method == "POST" and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        form = ContactFormData(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
 
-        # Save form data to the database
-        ContactForm.objects.create(
-            name=name,
-            email=email,
-            mobile=mobile,
-            enquiry_type=enquiry_type,
-            message=message
-        )
+            # Save to DB
+            ContactForm.objects.create(
+                name=data['name'],
+                email=data['email'],
+                mobile=data['mobile'],
+                enquiry_type=data['enquiry'],
+                message=data['message']
+            )
 
-        # Forward data to Web3Forms
-        data = {
-            "access_key": "7602f21f-477d-4668-8070-0b4e7ae9ae03",
-            "name": name,
-            "email": email,
-            "mobile": mobile,
-            "enquiry": enquiry_type,
-            "message": message
-        }
-        response = requests.post("https://api.web3forms.com/submit", data=data)
+            # Optional: Web3Forms integration (can be kept async)
+            try:
+                response = requests.post("https://api.web3forms.com/submit", data={
+                    "access_key": "7602f21f-477d-4668-8070-0b4e7ae9ae03",
+                    **data
+                })
+            except requests.exceptions.RequestException:
+                pass
 
-        # Check if Web3Forms submission was successful
-        if response.status_code == 200:
-            return redirect('home')  # Redirect to a thank-you page
+            return JsonResponse({'success': True})
+
         else:
-            return redirect('home')  # If Web3Forms fails, redirect to home
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+    else:
+        form = ContactFormData()
+    return render(request, 'index.html', {'form': form})
 
-    return render(request, 'index.html')
+
+def request_service(request):
+    if request.method == "POST":
+        form = Request_Service(request.POST)
+        if form.is_valid():
+            data = form.cleaned_data
+
+            # Save securely to the database
+            Enquiry.objects.create(
+                name=data['name'],
+                email=data['email'],
+                phone_number=data['phone_number'],
+                services=data['services'],
+                message=data['special_note']
+            )
+
+            messages.success(request, "Your request has been submitted successfully.")  # optional
+            return redirect('request_service')  # redirect to same view or a thank you page
+        else:
+            return render(request, 'Requestserviceform.html', {'form': form})
+    else:
+        form = Request_Service()
+    return render(request, 'Requestserviceform.html', {'form': form})
+
+
+def Enquiry_delete(request,id):
+    enquiry = Enquiry.objects.get(id = id)
+    print("the data:",enquiry)
+    if enquiry:
+        enquiry.delete()
+    return redirect('dashboard')
 
 
 

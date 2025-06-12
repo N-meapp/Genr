@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import *
-from .views import contact_form
+
 
 
 
@@ -11,7 +11,7 @@ urlpatterns = [
     path('automation',views.automation, name='automation'),
     path('cold_storage',views.cold_storage, name='cold_storage'),
     path('contact/',views.contact, name='contact'),
-    path('dashboard/',views.dashboard, name='dashboard'),
+    path('secure-admin-genr/',views.dashboard, name='dashboard'),
     path('gallery/',views.gallery_page,name='gallery'),
     path('genrsmart',views.genrsmart, name='genrsmart'),
     path('project',views.project, name='project'),
@@ -20,12 +20,12 @@ urlpatterns = [
     path('workdetails',views.workdetails, name='workdetails'),
     path('LoadCalc',views.LoadCalc, name='LoadCalc'),
     path('Careers',views.Careers, name='careers'),
-    path('apply/', job_application_view, name='job_application'),
+    path('apply/', views.job_application_view, name='job_application'),
     path('contact_form/', contact_form, name='contact_form'),
     path('addgallery',views.galleryadd,name='addgallery'),
     path('work_deatil/<int:work_id>',views.work_details,name='work_deatil'),
     path('workadd',views.workadd,name='workadd'),
-    path('contact',views.contact,name='contact'),
+    # path('contact',views.contact,name='contact'),
     path('offeradd',views.offeradd,name='offeradd'),
     path('careeradd',views.careeradd,name='careeradd'),
 
@@ -55,20 +55,13 @@ urlpatterns = [
 
     path('Review_delete/<int:id>/', views.Review_delete, name='Review_delete'),
     path('delete_news/<int:id>/', views.delete_news, name='delete_news'),
-    path('login/', views.login, name='login'),
-    # path('login/', views.login_view, name='login_view'),
-    path('logout/', views.logout_view, name='logout'),
-    # path('submit-review/', views.submit_review, name='submit_review'),
-
+    path('user-login-base/', login, name='login'),
+    path('remove-logout-session/', views.logout_view, name='logout'),
+    path('submit-review/', views.submit_review_ajax, name='submit_review_ajax'),    
     path('create-invoice/', views.create_invoice, name='create_invoice'),
     path('invoice_delete/<int:id>/', views.invoice_delete, name='invoice_delete'),
     path('add_brand', views.add_brand, name='add_brand'),
-    # path('generate_pdf/', views.generate_pdf, name='generate_pdf'),
-
-
-
-
-
+    # path('submit-review/', views.submit_review, name='submit_review'),
 
 
 ]
