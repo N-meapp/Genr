@@ -189,6 +189,9 @@ function handleLoadCalc(value, firstValueId, secondValueId, outputId) {
       output.style.fontSize = 'small'
     } else {
       output.value = value * secondValue;
+
+      console.log(value * secondValue,'fddfdfdf');
+      
      
     }
   } else {
@@ -330,6 +333,8 @@ function activeTabs(fade) {
 
 
 
+// drop down js
+ 
 
 
 

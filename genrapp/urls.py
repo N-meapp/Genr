@@ -45,13 +45,30 @@ urlpatterns = [
     path('updating_works/<int:id>/', views.updating_works, name='updating_works'),
     path('updating_count/<int:id>/', views.update_count, name='updating_count'),
     path('addnews',views.addnews, name="addnews"),
-    path('Review_delete/<int:id>/', views.Review_delete, name='Review_delete'),
+    path('addsolarpanel',views.solarpaneladd, name="addsolarpanel"),
+    path('solarpanel_delete/<int:id>/', views.solarpanel_delete, name='solarpanel_delete'),
+    path('invertoradd',views.invertoradd, name="invertoradd"),
+    path('invertor_delete/<int:id>/', views.invertor_delete, name='invertor_delete'),
+    path('add-package', views.add_package, name='add_package'),
+    path('add_product', views.add_product, name='add_product'),
+    # path('updating_package/<int:id>/', views.updating_package, name='updating_package'),
 
+    path('Review_delete/<int:id>/', views.Review_delete, name='Review_delete'),
     path('delete_news/<int:id>/', views.delete_news, name='delete_news'),
     path('login/', views.login, name='login'),
     # path('login/', views.login_view, name='login_view'),
     path('logout/', views.logout_view, name='logout'),
     # path('submit-review/', views.submit_review, name='submit_review'),
+
+    path('create-invoice/', views.create_invoice, name='create_invoice'),
+    path('invoice_delete/<int:id>/', views.invoice_delete, name='invoice_delete'),
+    path('add_brand', views.add_brand, name='add_brand'),
+    # path('generate_pdf/', views.generate_pdf, name='generate_pdf'),
+
+
+
+
+
 
 
 ]

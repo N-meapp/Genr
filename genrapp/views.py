@@ -25,6 +25,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 from django.views.decorators.cache import never_cache
 
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from .forms import *
+
 def home(request):
     news = News.objects.all()
     counts = Count.objects.first()
@@ -112,10 +116,6 @@ def solar(request):
 
 def workdetails(request):
     return render(request,'workdetails.html',{'offer_data': Offer.objects.all()})
-
-def LoadCalc(request):
-    return render(request,'LoadCalc.html',{'offer_data': Offer.objects.all()})
-
 
 
 
@@ -418,6 +418,10 @@ def dashboard(request):
         additional_work = Addiotional_work_images.objects.all()
         show_news = News.objects.all()
         rating = CustomerReview.objects.all()
+        products = Package.objects.prefetch_related('products').all()
+        Brands = Product.objects.prefetch_related('package').all()
+
+        
 
 
         context={
@@ -429,6 +433,9 @@ def dashboard(request):
                 'jobs': JobApplication.objects.all().distinct(),
                 'contact': ContactForm.objects.all().distinct(),
                 'count': Count.objects.all(),
+                'brand': Solarpanel.objects.all().distinct(),
+                'invertor': Invertor.objects.all().distinct(),
+                'packages': Package.objects.all().distinct(),
                 'powerenergy': powerenergyworks,
                 'automation': automationworks,
                 'cold': coldstorageworks,
@@ -440,7 +447,10 @@ def dashboard(request):
                 'gallerygenrsmart': genramartgallery,
                 'generatoradmin': generatoradmin,
                 'news': show_news,
-                'rating':rating
+                'rating':rating,
+                'invoice': Invoice.objects.all(),
+                'products': products,
+                'Brands': Brands
 
 
             }
@@ -623,7 +633,8 @@ def addnews(request):
         date= request.POST.get('newsdate')
         addingnews =News(image=image,description=desc,name=name,date=date)
         addingnews.save()
-    return redirect('dashboard')  # Replace 'admin_page' with the actual name of your page's URL pattern
+    return HttpResponseRedirect(reverse('dashboard') + '#news-section')
+
 
 
 
@@ -633,7 +644,8 @@ def delete_news(request, id):
         # Delete the gallery item
     news_item.delete()
     # Redirect to a gallery list or success page
-    return redirect('dashboard')
+    return HttpResponseRedirect(reverse('dashboard') + '#news-section')
+
 
 # Function to display the update form with the current data
 
@@ -675,9 +687,11 @@ def update_count(request, id):
         messages.success(request, "Offer updated successfully!")
 
         # Redirect to the offers page
-        return redirect('dashboard')
+        return HttpResponseRedirect(reverse('dashboard') + '#count-section')
 
-    return redirect('dashboard')  # In case of non-POST reque
+
+    return HttpResponseRedirect(reverse('dashboard') + '#count-section')
+
 
 
 
@@ -730,7 +744,8 @@ def job_delete(request,id):
     print("the data:",job)
     if job:
         job.delete()
-    return redirect('dashboard')
+    return HttpResponseRedirect(reverse('dashboard') + '#Career-section')
+
 
 
 
@@ -739,7 +754,8 @@ def contact_delete(request,id):
     print("the data:",contact)
     if contact:
         contact.delete()
-    return redirect('dashboard')
+    return HttpResponseRedirect(reverse('dashboard') + '#contact-section')
+
 
 # def submit_review(request):
 #     reviews = CustomerReview.objects.all()
@@ -748,3 +764,102 @@ def contact_delete(request,id):
 #     }
 #     return render(request, 'about.html', context)
 
+
+
+def solarpaneladd(request):
+    if request.method == "POST":
+        brand = request.POST.get('brand')
+        adding = Solarpanel(brand_name = brand)
+        adding.save()
+    return HttpResponseRedirect(reverse('dashboard') + '#solarpanel-section')
+
+def solarpanel_delete(request,id):
+    solarpanel = Solarpanel.objects.get(id = id)
+    if solarpanel:
+        solarpanel.delete()
+    return HttpResponseRedirect(reverse('dashboard') + '#solarpanel-section')
+
+
+def invertoradd(request):
+    if request.method == "POST":
+        brand = request.POST.get('brand')
+        adding = Invertor(brand_name = brand)
+        adding.save()
+    return HttpResponseRedirect(reverse('dashboard') + '#invertor-section')
+
+def invertor_delete(request,id):
+    invertor = Invertor.objects.get(id = id)
+    if invertor:
+        invertor.delete()
+    return HttpResponseRedirect(reverse('dashboard') + '#invertor-section')
+
+def add_package(request):
+    if request.method == 'POST':
+        package_name = request.POST.get('package_name')
+        price = request.POST.get('price')
+        if package_name:
+            Package.objects.create(name=package_name,price = price)
+    return HttpResponseRedirect(reverse('dashboard') + '#packages-section')
+
+def add_product(request):
+    if request.method == 'POST':
+        package_id = request.POST.get('package_id')
+        product_name = request.POST.get('product_name')
+
+        if package_id and product_name:
+            package = Package.objects.get(id=package_id)
+            Product.objects.create(name=product_name, package=package)
+
+        return redirect('dashboard')
+
+def add_brand(request):
+    if request.method == 'POST':
+        product_id = request.POST.get('product_id')
+        brand_name = request.POST.get('brand_name')
+
+        # Ensure the product exists
+        product = get_object_or_404(Product, id=product_id)
+
+        # Create the brand and associate it with the product
+        Brand.objects.create(name=brand_name, product=product)
+
+        # Redirect back to the dashboard or wherever you want to show the update
+        return redirect('dashboard')
+
+
+def LoadCalc(request):
+    packages = Package.objects.prefetch_related('products__brands').all()
+    context = {
+        'offer_data': Offer.objects.all(),
+        'packages': Package.objects.all().distinct(),
+        'brand': Solarpanel.objects.all().distinct(),
+        'invertor': Invertor.objects.all().distinct(),
+        'packages': packages,
+    
+    }
+    return render(request,'LoadCalc.html',context)
+
+def create_invoice(request):
+    if request.method == 'POST':
+        solar = request.POST.get('selectedSolarPanel')
+        inverter = request.POST.get('selectedInvertor')
+        package_id = request.POST.get('selectedPackage')
+        details = request.POST.get('packageDetails')
+
+        # Save to DB
+        Invoice.objects.create(
+            solar_brands=solar,
+            invertor_brands=inverter,
+            packages=package_id,
+            details=details
+        )
+
+        return redirect('LoadCalc')  # redirect to a thank you or success page
+
+    return redirect('home') 
+
+
+def invoice_delete(request, id):
+    invoice = Invoice.objects.get(id=id)
+    invoice.delete()
+    return redirect('dashboard')

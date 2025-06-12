@@ -38,9 +38,13 @@
             <button onclick="showOfferFunction('application-section')" class="nav-item" id="application-section-id">Job Applications</button>
             <button onclick="showOfferFunction('contact-section')" class="nav-item" id="contact-section-id">Contact Form</button>
             <button onclick="showOfferFunction('news-section')" class="nav-item" id="news-section-id">News</button>
-            <button onclick="showOfferFunction('count-section')" class="nav-item" id="count-section-id">Count</button>
+            <button onclick="showOfferFunction('count-section')" class="nav-item" id="count-section-id">Happy Custumers</button>
             <button onclick="showOfferFunction('rating-section')" class="nav-item" id="rating-section-id">Rating</button>
-           <a href="logout"><button  class="nav-item" >Logout</button></a> 
+            <button onclick="showOfferFunction('solarpanel-section')" class="nav-item" id="solarpanel-section-id">Solar Panels</button>
+            <button onclick="showOfferFunction('invertor-section')" class="nav-item" id="invertor-section-id">Invertors</button>
+            <button onclick="showOfferFunction('packages-section')" class="nav-item" id="packages-section-id">Packages</button>
+            <button onclick="showOfferFunction('invoices-section')" class="nav-item" id="invoices-section-id">Invoices</button>
+            <a href="{% url 'logout' %}"><button class="nav-item logout" ><i class="bi bi-box-arrow-left"></i>    Logout</button></a> 
           </div>
         </div>
         <div class="table-content grow" id="offersection">
@@ -412,8 +416,6 @@
         </div>
 
 
-
-
         <div class="table-content grow" id="Career-section" style="display: none;">
           <div class="container mb-5 ">
             <!-- Trigger Button -->
@@ -684,12 +686,6 @@
         </div>
       </div>
 
-
-
-
-
-
-      
       <div class="table-content grow" id="count-section" style="display: none;">
           <div class="table-list">
               <table>
@@ -839,6 +835,387 @@
 
 
         
+
+      </div>
+
+
+      <div class="table-content grow" id="solarpanel-section" style="display: none;"   >
+        <div class="container mb-5 ">
+          <!-- Trigger Button -->
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#solarpaneladdModal">
+            Add New
+          </button>
+
+
+          <!-- Modal -->
+          <div class="modal fade" id="solarpaneladdModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="registerModalLabel">Add Solarpanel</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="solarpanelForm" action="{% url 'addsolarpanel' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+    
+                    <div class="mb-3">
+                      <label for="brand" class="form-label">Brand Name</label>
+                      <input type="text" name="brand" class="form-control" id="brand" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 mt-5">Submit</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="table-list" >
+          <table>
+            <thead>
+              <tr class="heading">
+                <th>Title</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in brand %}
+              <tr>
+                <td>{{data.brand_name}}</td>
+                <!-- <td><a href="#" data-bs-toggle="modal" data-bs-target="#updateModalcareer" onclick="openUpdateModalnews('{{ data.id }}','{{ data.name }}','{{ data.description }}','{{ data.date }}','{{ data.email }}')"><i class="bi bi-pencil-fill"></i></a></td> -->
+                <td><a href="/solarpanel_delete/{{data.id}}" onclick="return confirm('Are you sure you want to delete this item?');"><i class="bi bi-trash-fill"></i></a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <div class="table-content grow" id="invertor-section" style="display: none;"   >
+        <div class="container mb-5 ">
+          <!-- Trigger Button -->
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#invertoraddModal">
+            Add New
+          </button>
+
+
+          <!-- Modal -->
+          <div class="modal fade" id="invertoraddModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="registerModalLabel">Add Invertor's</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="invertorForm" action="{% url 'invertoradd' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+    
+                    <div class="mb-3">
+                      <label for="brand" class="form-label">Brand Name</label>
+                      <input type="text" name="brand" class="form-control" id="brand" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 mt-5">Submit</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="table-list" >
+          <table>
+            <thead>
+              <tr class="heading">
+                <th>Title</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in invertor %}
+              <tr>
+                <td>{{data.brand_name}}</td>
+                <!-- <td><a href="#" data-bs-toggle="modal" data-bs-target="#updateModalcareer" onclick="openUpdateModalnews('{{ data.id }}','{{ data.name }}','{{ data.description }}','{{ data.date }}','{{ data.email }}')"><i class="bi bi-pencil-fill"></i></a></td> -->
+                <td><a href="/invertor_delete/{{data.id}}" onclick="return confirm('Are you sure you want to delete this item?');"><i class="bi bi-trash-fill"></i></a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+      <div class="table-content grow" id="packages-section" style="display: none;"   >
+        <div class="container mb-5 ">
+          <!-- Trigger Button -->
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#packagesaddModal">
+            Add New Package
+          </button>
+
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="" onclick="showproductFunction('packagessection')">
+            Packages
+          </button>
+
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="" onclick="showproductFunction('productsection')">
+            Products
+          </button>
+
+          <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="" onclick="showproductFunction('brandsection')">
+            Brands
+          </button>
+
+
+          <!-- Modal -->
+          <div class="modal fade" id="packagesaddModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="registerModalLabel">Add Package's</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <form id="packagesForm" action="{% url 'add_package' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+    
+                    <div class="mb-3">
+                      <label for="package_name" class="form-label">Package Name</label>
+                      <input type="text" name="package_name" class="form-control" id="package_name" required>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="price" class="form-label">Package Name</label>
+                      <input type="text" name="price" class="form-control" id="price" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mt-5">Submit</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+                <!-- product add modal -->
+        <div class="modal fade" id="addproductmodal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="registerModalLabel">Add Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form id="packagesForm" action="{% url 'add_product' %}" method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
+  
+                  <div class="mb-3">
+                    <label>Select Package:</label>
+                    <select name="package_id">
+                      {% for package in packages %}
+                        <option value="{{ package.id }}">{{ package.name }}</option>
+                      {% endfor %}
+                    </select><br><br>
+
+                    <label>Product Name:</label>
+                    <input type="text" name="product_name" required><br><br>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary w-100 mt-5">Submit</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="brandModal" tabindex="-1" aria-labelledby="brandModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="brandModalLabel">Add Brand for Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form action="{% url 'add_brand' %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="product_id" id="modalProductId">
+                  
+                  <div class="mb-3">
+                    <label for="brandName" class="form-label">Brand Name</label>
+                    <input type="text" name="brand_name" id="brandName" class="form-control" required>
+                  </div>
+                  
+                  <button type="submit" class="btn btn-primary w-100 mt-3">Submit</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        <div class="table-list packagearea grow" id="packagessection" >
+          <table>
+            <thead>
+              <tr class="heading">
+                <th>Name</th>
+                <th>Add Products</th>
+
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in packages %}
+              <tr>
+                <td>{{data.name}}</td>
+                <td><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addproductmodal">
+                  Add New Product
+                </button></td>
+                <td><a href="/packages_delete/{{data.id}}" onclick="return confirm('Are you sure you want to delete this item?');"><i class="bi bi-trash-fill"></i></a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-list packagearea grow" id="productsection" style="display: none;">
+          <table class="table" style="--bs-table-bg: transparent; --bs-table-accent-bg: transparent;">
+            <thead>
+              <tr class="heading">
+                <th>Package Name</th> 
+                <th>Product Name</th> 
+              </tr>
+            </thead>
+            <tbody>
+              {% for package in products %}
+                {% for product in package.products.all %}
+                  <tr>
+                    <td>{{ package.name }}</td>
+                    <td>{{ product.name }}</td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td>{{ package.name }}</td>
+                    <td colspan="2">No products yet</td>
+                  </tr>
+                {% endfor %}
+              {% empty %}
+                <tr>
+                  <td colspan="3">No packages available</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          
+              
+        </div>
+
+        <div class="table-list packagearea grow" id="brandsection" style="display: none;">
+          <table class="table" style="--bs-table-bg: transparent; --bs-table-accent-bg: transparent;">
+            <thead>
+              <tr class="heading">
+                <th>Package Name</th>
+                <th>Product Name</th>
+                <th>Brands</th>  <!-- Column for displaying brands -->
+                <th>Actions</th>  <!-- Button to add brand for each product -->
+              </tr>
+            </thead>
+            <tbody>
+              {% for package in packages %}
+                {% for product in package.products.all %}
+                  <tr>
+                    <td>{{ package.name }}</td>
+                    <td>{{ product.name }}</td>
+          
+                    <!-- Display the brands for each product -->
+                    <td>
+                      {% if product.brands.all %}
+                        <ul>
+                          {% for brand in product.brands.all %}
+                            <li>{{ brand.name }}</li>
+                          {% endfor %}
+                        </ul>
+                      {% else %}
+                        <p>No brands available</p>
+                      {% endif %}
+                    </td>
+          
+                    <!-- Button to open the modal to add a brand -->
+                    <td>
+                      <button 
+                        type="button" 
+                        class="btn btn-sm btn-primary"
+                        data-bs-toggle="modal" 
+                        data-bs-target="#brandModal" 
+                        data-product-id="{{ product.id }}">
+                        Add Brand
+                      </button>
+                    </td>
+                  </tr>
+                {% endfor %}
+              {% endfor %}
+            </tbody>
+          </table>
+          
+        
+        </div>
+
+      </div>
+
+      <div class="table-content grow" id="invoices-section" style="display: none;"   >
+        <div class="table-list" >
+          <table>
+            <thead>
+              <tr class="heading">
+                <th>solar_brands</th>
+                <th>invertor_brands</th>
+                <th>packages</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for data in invoice %}
+              <tr>
+                <td>{{data.solar_brands}}</td>
+                <td>{{data.invertor_brands}}</td>
+                <td>{{data.packages}}</td>
+                <td><a href="/invoice_delete/{{data.id}}" onclick="return confirm('Are you sure you want to delete this item?');"><i class="bi bi-trash-fill"></i></a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+
+        <div class="modal fade" id="updateModalpackage" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel">Edit package</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form id="packageFormupdate" method="POST">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                    <label for="name" class="form-label">Package Name</label>
+                    <input type="text" class="form-control" id="name" name="name">
+                  </div>
+                  <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <input type="text" class="form-control" id="description" name="description">
+                  </div>
+                  <button type="submit" class="btn btn-primary w-100">Update</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
 
       </div>
 
@@ -1067,7 +1444,6 @@
               </tbody>
             </table>
           </div>
-
 
           <!-- Update Modal -->
           <!-- <div class="modal fade" id="updateModal3" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">

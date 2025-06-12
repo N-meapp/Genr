@@ -148,3 +148,42 @@ class CustomerReview(models.Model):
         return f"{self.full_name} - {self.rating} stars"
 
    
+class Solarpanel(models.Model):
+    brand_name = models.CharField(max_length=50)
+
+
+class Invertor(models.Model):
+    brand_name = models.CharField(max_length=50)
+
+
+    
+class Invoice(models.Model):
+    solar_brands = models.CharField(max_length=30)
+    invertor_brands = models.CharField(max_length=30)
+    total_power = models.CharField(max_length=30,blank=True)
+    packages = models.TextField()
+    details = models.TextField()
+
+
+class Package(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.CharField(max_length=100,blank=True) 
+
+    def __str__(self):
+        return self.name
+
+class Product(models.Model):
+    name = models.CharField(max_length=100)
+    package = models.ForeignKey('Package', on_delete=models.CASCADE, related_name='products')  
+
+
+    def __str__(self):
+        return f"{self.name} ({self.package.name})"
+
+class Brand(models.Model):
+    name = models.CharField(max_length=100)
+    product = models.ForeignKey(Product, related_name='brands', on_delete=models.CASCADE)
+
+
+    def __str__(self):
+        return f"{self.name} - {self.product.name}"

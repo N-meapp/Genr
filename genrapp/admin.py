@@ -29,6 +29,15 @@ admin.site.register(Login)
 admin.site.register(Count)
 admin.site.register(WorkPlace)
 admin.site.register(CustomerReview)
+admin.site.register(Solarpanel)
+admin.site.register(Invertor)
+admin.site.register(Invoice)
+admin.site.register(Package)
+admin.site.register(Product)
+admin.site.register(Brand)
+
+
+
 
 class Additional_imagesTabular(admin.TabularInline):
     model = Addiotional_work_images

@@ -241,8 +241,6 @@ for (let i = 0; i < arrayGallery.length; i++) {
 
 
 
-
-
 function confirmDelete(jobId) {
   if (confirm("Are you sure you want to delete this job application?")) {
       document.getElementById('delete-form-' + jobId).submit();
@@ -253,7 +251,49 @@ function confirmDelete(jobId) {
 
 
 
+function openUpdateModalpackage(id, name, description) {
+  const form = document.querySelector('#packageFormupdate');
+  const titleInput = document.querySelector('#name');
+  const contentInput = document.querySelector('#description');
 
+  // Set form action URL dynamically
+  form.action = `/updating_package/${id}/`;
+
+  // Populate the modal fields
+  titleInput.value = name || ''; // Default to empty string if null/undefined
+  contentInput.value = description || ''; // Default to empty string if null/undefined
+}
 
 
   
+function showproductFunction(package_categories) {
+  const packageArea = document.getElementById(`${package_categories}`);
+  const arrayPackage = document.getElementsByClassName('packagearea')
+
+
+console.log(packageArea.id);
+
+for (let i = 0; i < arrayPackage.length; i++) {
+    console.log(arrayPackage[i].id);
+    
+    if (packageArea.id == arrayPackage[i].id) {
+        console.log(true);
+        arrayPackage[i].style.display = 'block'; 
+    }
+    else{
+      arrayPackage[i].style.display = 'none'; 
+    }
+}
+}
+
+
+
+
+  const brandModal = document.getElementById('brandModal');
+  brandModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget; // Button that triggered the modal
+    const productId = button.getAttribute('data-product-id'); // Extract product ID from data-product-id
+    
+    // Set the product ID in the hidden input field
+    document.getElementById('modalProductId').value = productId;
+  });

@@ -1,5 +1,5 @@
 from django import forms
-from .models import JobApplication, Career
+from .models import *
 
 class JobApplicationForm(forms.ModelForm):
     job_position = forms.ModelChoiceField(
@@ -17,3 +17,5 @@ class JobApplicationForm(forms.ModelForm):
             'phone_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter Phone Number'}),
             'cv': forms.ClearableFileInput(attrs={'class': 'form-control'}),
         }
+
+
